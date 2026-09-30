@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EduGenie - AI Learning Assistant</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #222;
+        }
+
+        .header {
+            background: #4f46e5;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            font-size: 16px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #4f46e5;
+            margin-top: 0;
+        }
+
+        textarea,
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #3730a3;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .feature {
+            background: #eef2ff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🎓 EduGenie</h1>
+        <p>Google Gemini Powered Learning Assistant</p>
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>Welcome to EduGenie</h2>
+            <p>
+                EduGenie helps students learn using AI.
+                Ask questions, understand topics, create quizzes,
+                summarize text, and get a learning roadmap.
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>✨ Features</h2>
+
+            <div class="features">
+
+                <div class="feature">
+                    <h3>💬 Q&A</h3>
+                    <p>Ask educational questions and get clear answers.</p>
+                </div>
+
+                <div class="feature">
+                    <h3>📚 Explain</h3>
+                    <p>Get difficult topics explained in simple language.</p>
+                </div>
+
+                <div class="feature">
+                    <h3>📝 Quiz</h3>
+                    <p>Generate multiple-choice questions for practice.</p>
+                </div>
+
+                <div class="feature">
+                    <h3>📄 Summary</h3>
+                    <p>Convert long text into a simple summary.</p>
+                </div>
+
+                <div class="feature">
+                    <h3>🗺️ Learning Path</h3>
+                    <p>Get a step-by-step learning roadmap.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💬 Ask EduGenie</h2>
+
+            <textarea
+                id="question"
+                rows="4"
+                placeholder="Example: What is Python?"
+            ></textarea>
+
+            <button onclick="askQuestion()">Ask Question</button>
+
+            <div id="answer" class="result">
+                Your answer will appear here.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        async function askQuestion() {
+
+            const question = document.getElementById("question").value;
+            const answerBox = document.getElementById("answer");
+
+            if (!question.trim()) {
+                answerBox.innerText = "Please enter a question.";
+                return;
+            }
+
+            answerBox.innerText = "Thinking...";
+
+            try {
+
+                const response = await fetch("/qa", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        question: question
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.answer) {
+                    answerBox.innerText = data.answer;
+                } else if (data.detail) {
+                    answerBox.innerText = data.detail;
+                } else {
+                    answerBox.innerText = JSON.stringify(data, null, 2);
+                }
+
+            } catch (error) {
+
+                answerBox.innerText =
+                    "Unable to connect to the EduGenie server.";
+            }
+        }
+    </script>
+
+</body>
+</html>
